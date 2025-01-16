@@ -98,10 +98,19 @@ if (isset($_SESSION['error'])) {
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous"></script>
+    <style>
+        form {
+            background: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
-        <h2>Add New Course</h2>
         <?php if (!empty($error)) { ?>
             <div class="alert alert-danger"><?= $error ?></div>
         <?php } ?>
@@ -109,6 +118,7 @@ if (isset($_SESSION['error'])) {
             <div class="alert alert-success"><?= $success ?></div>
         <?php } ?>
         <form method="POST" action="">
+            <h3 class="text-center">Add New Course</h3>
             <input type="hidden" name="action" value="add">
             <div class="form-group">
                 <label for="course_code">Course Code:</label>
@@ -128,7 +138,7 @@ if (isset($_SESSION['error'])) {
         <div class="card mb-4">
             <div class="card-header">
                 <i class="fas fa-table mr-1"></i>
-                Courses List
+                Course List
             </div>
             <div class="card-body">
                 <div class="table-responsive">

@@ -43,7 +43,7 @@ if (isset($_SESSION['email']) && isset($_SESSION['id'])) {
     <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh">
         <form class="form-container" action="php/register-handler.php" method="post" style="width: 450px;">
             <!-- Logo Image -->
-            <img src="assets/img/logo.png" alt="ACPS Logo" width="100" height="100">
+            <img src="assets/img/logo.png" alt="ACPS Logo" width="100" height="85">
             <!-- Title -->
             <h4>Academic Course Planner System</h4>
             <h2>Registration</h2>

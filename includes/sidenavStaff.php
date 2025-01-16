@@ -18,12 +18,6 @@
                     <div class="sb-nav-link-icon"><i class="fas fa-tasks"></i></div>
                     Manage Courses
                 </a>
-
-                <!-- Reports Link -->
-                <a class="nav-link" href="reports.php">
-                    <div class="sb-nav-link-icon"><i class="fas fa-chart-bar"></i></div>
-                    Reports
-                </a>
             </div>
         </div>
 

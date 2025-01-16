@@ -69,7 +69,6 @@ if ($result->num_rows > 0) {
 $stmt->close();
 $conn->close();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -77,29 +76,171 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <title>Performance Prediction</title>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+        .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+        .card-title {
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+        .card h3 {
+            font-size: 1.75rem;
+            color: #007bff;
+        }
+        .row {
+            margin-bottom: 20px;
+        }
+        @media (max-width: 576px) {
+            .card-title {
+                font-size: 1rem;
+            }
+            .card h3 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
-        <h2>Performance Prediction</h2>
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Your Predicted Highest CGPA</h5>
-                <p class="card-text">Based on your current academic record, your highest predicted CGPA after graduation is:</p>
-                <h3><?php echo $highest_cgpa; ?></h3>
+        <h2 class="text-center mb-4">Performance Prediction</h2>
+        <h5 style="color:rgb(241, 50, 7);" class="text-center card-title mb-4">Your Current CGPA: <?php echo $cgpa; ?></h5>
+
+        <!-- <div class="text-center mb-4">
+            <h5 class="card-title">Your Current CGPA</h5>
+            <h3 style="color:#007bff;"><?php echo $cgpa; ?></h3>
+        </div> -->
+
+        <!-- Highest and Lowest CGPA in a single row -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Predicted Highest CGPA</h5>
+                        <p class="card-text">Based on your current academic record, your highest predicted CGPA after graduation is:</p>
+                        <h3><?php echo $highest_cgpa; ?></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Predicted Lowest CGPA</h5>
+                        <p class="card-text">Based on your current academic record, your lowest predicted CGPA after graduation is:</p>
+                        <h3><?php echo $lowest_cgpa; ?></h3>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Your Predicted Lowest CGPA</h5>
-                <p class="card-text">Based on your current academic record, your lowest predicted CGPA after graduation is:</p>
-                <h3><?php echo $lowest_cgpa; ?></h3>
+
+        <!-- Charts in a single row -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Predicted CGPA Range (Bar Chart)</h5>
+                        <canvas id="cgpaBarChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Predicted CGPA Range (Line Chart)</h5>
+                        <canvas id="cgpaLineChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
-        <a href="profile.php" class="btn btn-primary mt-3">Back to Profile</a>
+
+        <div class="text-center">
+            <a href="profile.php" class="btn btn-primary mt-3">Back to Profile</a>
+            <br><br>
+        </div>
     </div>
 
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Bar Chart
+        const barCtx = document.getElementById('cgpaBarChart').getContext('2d');
+        const cgpaBarChart = new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Highest CGPA', 'Current CGPA', 'Lowest CGPA'],
+                datasets: [{
+                    label: 'CGPA',
+                    data: [<?php echo $highest_cgpa; ?>, <?php echo $cgpa; ?>, <?php echo $lowest_cgpa; ?>],
+                    backgroundColor: ['#4CAF50', '#d1da3a', '#FF5733'],
+                    // borderColor: ['#388E3C', '#C0392B'],
+                    // borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 4.0 // Assuming 4.0 as the maximum CGPA scale
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Line Chart
+        const lineCtx = document.getElementById('cgpaLineChart').getContext('2d');
+        const cgpaLineChart = new Chart(lineCtx, {
+            type: 'line',
+            data: {
+                labels: ['Highest CGPA', 'Current CGPA', 'Lowest CGPA'], // Updated labels
+                datasets: [
+                    {
+                        label: ['CGPA'],
+                        data: [<?php echo $highest_cgpa; ?>, <?php echo $cgpa; ?>, <?php echo $lowest_cgpa; ?>],
+                        borderColor: ['#4CAF50', '#d1da3a', '#FF5733'],
+                        backgroundColor: ['#4CAF50', '#d1da3a', '#FF5733'],
+                        // fill: true,
+                        // tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 4.0 // Assuming a maximum CGPA of 4.0
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                // elements: {
+                //     point: {
+                //         pointStyle: 'rectRounded',
+                //         backgroundColor: '#FF5733'
+                //     }
+                // }
+            }
+        });
+    </script>
 </body>
 </html>

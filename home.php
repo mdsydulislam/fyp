@@ -11,13 +11,13 @@
 <body>
       	<?php 
         if ($_SESSION['role'] == 'student') {?>
-      		<!-- For KAFA Admin -->
+      		<!-- For Student -->
             <?php
             include("template.php");
             ?>	
       	<?php }
         else { ?>
-      		<!-- for MUIP Admin -->
+      		<!-- for Staff -->
             <?php
             include("template.php");
             ?>

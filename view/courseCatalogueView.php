@@ -45,6 +45,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = "Error adding lab: " . mysqli_error($conn);
         }
     }
+
+// Add section edit functionality
+// if (isset($_POST['edit_section'])) {
+//     $section_id = mysqli_real_escape_string($conn, $_POST['section_id']);
+//     $section_number = mysqli_real_escape_string($conn, $_POST['section_number']);
+//     $time_slot = mysqli_real_escape_string($conn, $_POST['time_slot']);
+//     $day = mysqli_real_escape_string($conn, $_POST['day']);
+
+//     $sql = "UPDATE sections SET section_number='$section_number', time_slot='$time_slot', day='$day' WHERE id='$section_id'";
+//     if (mysqli_query($conn, $sql)) {
+//         $_SESSION['success'] = "Section updated successfully!";
+//     } else {
+//         $_SESSION['error'] = "Error updating section: " . mysqli_error($conn);
+//     }
+//     // Reload the page without header redirect
+//     echo "<script>window.location.href = 'courseCatalogue.php';</script>";
+//     exit();
+// }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_section'])) {
+    $section_id = mysqli_real_escape_string($conn, $_POST['section_id']);
+    $section_number = mysqli_real_escape_string($conn, $_POST['section_number']);
+    $time_slot = mysqli_real_escape_string($conn, $_POST['time_slot']);
+    $day = mysqli_real_escape_string($conn, $_POST['day']);
+
+    $sql = "UPDATE sections SET section_number='$section_number', time_slot='$time_slot', day='$day' WHERE id='$section_id'";
+    if (mysqli_query($conn, $sql)) {
+        $_SESSION['success'] = "Section updated successfully!";
+    } else {
+        $_SESSION['error'] = "Error updating section: " . mysqli_error($conn);
+    }
+    echo "<script>window.location.href = 'courseCatalogue.php';</script>";
+    exit();
+}
+
+
+// Add lab edit functionality
+if (isset($_POST['edit_lab'])) {
+    $lab_id = mysqli_real_escape_string($conn, $_POST['lab_id']);
+    $lab_code = mysqli_real_escape_string($conn, $_POST['lab_code']);
+    $time_slot = mysqli_real_escape_string($conn, $_POST['time_slot']);
+    $day = mysqli_real_escape_string($conn, $_POST['day']);
+
+    $sql = "UPDATE labs SET lab_code='$lab_code', time_slot='$time_slot', day='$day' WHERE id='$lab_id'";
+    if (mysqli_query($conn, $sql)) {
+        $_SESSION['success'] = "Lab updated successfully!";
+    } else {
+        $_SESSION['error'] = "Error updating lab: " . mysqli_error($conn);
+    }
+    // Reload the page without header redirect
+    echo "<script>window.location.href = 'courseCatalogue.php';</script>";
+    exit();
+}
 }
 
 
@@ -182,7 +235,11 @@ if (isset($_SESSION['error'])) {
                                     <button class="btn btn-sm btn-light add-lab-btn" data-section-id="<?= $section['id'] ?>">
                                         <i class="fas fa-plus"></i></i> Add Lab
                                     </button>
-                                    <button class="btn btn-sm btn-success" sectionEdit-button-id="<?= $section['id'] ?>"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-warning edit-section-btn" data-section-id="<?= $section['id'] ?>" data-section-number="<?= $section['section_number'] ?>" data-time-slot="<?= $section['time_slot'] ?>" data-day="<?= $section['day'] ?>">
+                                        Edit
+                                    </button>
+                                    <!-- <button class="btn btn-sm btn-success" sectionEdit-button-id="<?= $section['id'] ?>"><i class="fas fa-edit"></i></button> -->
+                                    <!-- <button class="btn btn-sm btn-warning" sectionEdit-button-id="<?= $section['id'] ?>">Edit</button> -->
                                     <a href="?remove_section=<?= $section['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to remove this section and all associated labs?');">
                                         <i class="far fa-trash-alt"></i> Remove
                                     </a>
@@ -200,7 +257,7 @@ if (isset($_SESSION['error'])) {
                                         <table class="table table-sm table-bordered mt-2 mb-2">
                                             <thead class="table-light">
                                                 <tr>
-                                                    <th style="width: 20%">Lab Code</th>
+                                                    <th style="width: 20%">Lab</th>
                                                     <th style="width: 20%">Time Slot</th>
                                                     <th style="width: 20%">Day</th>
                                                     <th class="action-column">Actions</th>
@@ -209,7 +266,7 @@ if (isset($_SESSION['error'])) {
                                             <tbody>
                                             <?php while ($lab = mysqli_fetch_assoc($labs_result)) { ?>
                                                 <tr>
-                                                    <td><?= htmlspecialchars($lab['lab_code']) ?></td>
+                                                    <td>Lab <?= htmlspecialchars($lab['lab_code']) ?></td>
                                                     <td><?= htmlspecialchars($lab['time_slot']) ?></td>
                                                     <td><?= htmlspecialchars($lab['day']) ?></td>
                                                     <td>
@@ -243,8 +300,8 @@ if (isset($_SESSION['error'])) {
         <h5>Add Section</h5>
         <input type="hidden" name="course_id" id="popup-course-id">
         <div class="form-group">
-            <label>Section Number:</label>
-            <input type="number" name="section_number" class="form-control" required>
+            <label>Section:</label>
+            <input type="text" name="section_number" class="form-control" required>
         </div>
         <div class="form-group">
             <label for="time_slot">Time Slot:</label>
@@ -267,7 +324,7 @@ if (isset($_SESSION['error'])) {
             </select>
         </div>
         <button type="submit" name="add_section" class="btn btn-primary btn-sm">Add Section</button>
-        <button type="button" class="btn btn-secondary btn-sm close-popup">Cancel</button>
+        <button type="button" class="btn btn-secondary btn-sm close-popup" onclick="closeAddSectionPopup()">Cancel</button>
     </form>
 </div>
 
@@ -277,7 +334,7 @@ if (isset($_SESSION['error'])) {
         <h5>Add Lab</h5>
         <input type="hidden" name="section_id" id="popup-section-id">
         <div class="form-group">
-            <label>Lab Code:</label>
+            <label>Lab:</label>
             <input type="text" name="lab_code" class="form-control" required>
         </div>
         <div class="form-group">
@@ -301,9 +358,84 @@ if (isset($_SESSION['error'])) {
             </select>
         </div>
         <button type="submit" name="add_lab" class="btn btn-primary btn-sm">Add Lab</button>
-        <button type="button" class="btn btn-secondary btn-sm close-popup">Cancel</button>
+        <button type="button" class="btn btn-secondary btn-sm close-popup" onclick="closeAddLabPopup()">Cancel</button>
     </form>
 </div>
+
+<!-- Edit Section Popup -->
+<div class="popup-form" id="edit-section-popup">
+    <form method="POST" action="">
+        <h5>Edit Section</h5>
+        <input type="hidden" name="section_id" id="edit-section-id">
+        <div class="form-group">
+            <label for="edit-section-number">Section:</label>
+            <input type="text" name="section_number" id="edit-section-number" class="form-control" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="edit-time-slot">Time Slot:</label>
+            <select name="time_slot" id="edit-time-slot" class="form-control">
+                <option value="8-10">8-10</option>
+                <option value="10-12">10-12</option>
+                <option value="12-14">12-14</option>
+                <option value="14-16">14-16</option>
+                <option value="16-18">16-18</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="edit-day">Day:</label>
+            <select name="day" id="edit-day" class="form-control">
+                <option value="Mon">Monday</option>
+                <option value="Tue">Tuesday</option>
+                <option value="Wed">Wednesday</option>
+                <option value="Thu">Thursday</option>
+                <option value="Fri">Friday</option>
+            </select>
+        </div>
+
+        <button type="submit" name="edit_section" class="btn btn-primary btn-sm">Save Changes</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeEditSectionPopup()">Cancel</button>
+    </form>
+</div>
+<div class="popup-overlay" id="popup-overlay"></div>
+
+
+
+<!-- Lab Edit Popup -->
+<div class="popup-form" id="edit-lab-popup">
+    <form method="POST" action="">
+        <h5>Edit Lab</h5>
+        <input type="hidden" name="lab_id" id="popup-lab-id">
+        <div class="form-group">
+            <label>Lab:</label>
+            <input type="text" name="lab_code" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="time_slot">Time Slot:</label>
+            <select name="time_slot" class="form-control">
+                <option value="8-10">8-10</option>
+                <option value="10-12">10-12</option>
+                <option value="12-14">12-14</option>
+                <option value="14-16">14-16</option>
+                <option value="16-18">16-18</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="day">Day:</label>
+            <select name="day" class="form-control">
+                <option value="Mon">Monday</option>
+                <option value="Tue">Tuesday</option>
+                <option value="Wed">Wednesday</option>
+                <option value="Thu">Thursday</option>
+                <option value="Fri">Friday</option>
+            </select>
+        </div>
+        <button type="submit" name="edit_lab" class="btn btn-primary btn-sm">Save Changes</button>
+        <button type="button" class="btn btn-secondary btn-sm close-popup" onclick="closeEditLabPopup()">Cancel</button>
+    </form>
+</div>
+
 
 <script>
 document.querySelectorAll('.add-section-btn').forEach(btn => {
@@ -314,6 +446,12 @@ document.querySelectorAll('.add-section-btn').forEach(btn => {
     });
 });
 
+function closeAddSectionPopup() {
+    document.getElementById('add-section-popup').style.display = 'none';
+    document.getElementById('popup-overlay').style.display = 'none';
+}
+
+
 document.querySelectorAll('.add-lab-btn').forEach(btn => {
     btn.addEventListener('click', function () {
         document.getElementById('popup-section-id').value = this.dataset.sectionId;
@@ -322,19 +460,51 @@ document.querySelectorAll('.add-lab-btn').forEach(btn => {
     });
 });
 
-document.querySelectorAll('.close-popup').forEach(btn => {
+function closeAddLabPopup() {
+    document.getElementById('add-lab-popup').style.display = 'none';
+    document.getElementById('popup-overlay').style.display = 'none';
+}
+
+
+document.querySelectorAll('.edit-section-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            // Populate the form fields with current values
+            document.getElementById('edit-section-id').value = this.getAttribute('data-section-id');
+            document.getElementById('edit-section-number').value = this.getAttribute('data-section-number');
+            
+            // Set the dropdown values
+            document.getElementById('edit-time-slot').value = this.getAttribute('data-time-slot');
+            document.getElementById('edit-day').value = this.getAttribute('data-day');
+
+            // Show the popup
+            document.getElementById('edit-section-popup').style.display = 'block';
+            document.getElementById('popup-overlay').style.display = 'block';
+        });
+    });
+
+function closeEditSectionPopup() {
+    document.getElementById('edit-section-popup').style.display = 'none';
+    document.getElementById('popup-overlay').style.display = 'none';
+}
+
+document.querySelectorAll('[labEdit-button-id]').forEach(btn => {
     btn.addEventListener('click', function () {
-        document.getElementById('popup-overlay').style.display = 'none';
-        document.getElementById('add-section-popup').style.display = 'none';
+        // Populate the lab edit popup form with the current values
+        document.getElementById('popup-lab-id').value = this.getAttribute('labEdit-button-id');
         document.getElementById('add-lab-popup').style.display = 'none';
+        document.getElementById('edit-lab-popup').style.display = 'block';
+        document.getElementById('popup-overlay').style.display = 'block';
+
+        document.getElementById('edit-lab-popup').style.display = 'block';
+        document.getElementById('popup-overlay').style.display = 'block';
     });
 });
 
-document.getElementById('popup-overlay').addEventListener('click', function () {
-    this.style.display = 'none';
-    document.getElementById('add-section-popup').style.display = 'none';
-    document.getElementById('add-lab-popup').style.display = 'none';
-});
+function closeEditLabPopup() {
+    document.getElementById('edit-lab-popup').style.display = 'none';
+    document.getElementById('popup-overlay').style.display = 'none';
+}
+
 </script>
 </body>
 </html>
